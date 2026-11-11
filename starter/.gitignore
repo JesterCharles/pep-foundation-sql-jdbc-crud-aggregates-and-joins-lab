@@ -1,0 +1,9 @@
+# Maven output: compiled classes, test reports and target/lab-database.txt
+target/
+# Editor and IDE settings stay on your machine
+.idea/
+.vscode/
+*.iml
+# Local settings and passwords never belong in the lab (use ~/.pgpass)
+.env
+*.local

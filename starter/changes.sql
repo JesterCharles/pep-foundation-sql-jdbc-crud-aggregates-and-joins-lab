@@ -1,0 +1,4 @@
+-- Task 2: two registrar changes (README.md, Task 2). Preview each WHERE with a SELECT
+-- in psql first, then keep only the UPDATE and the DELETE in this file.
+-- Each statement ends with RETURNING so it shows the row it changed.
+-- TODO: write the UPDATE, then the DELETE, below this line.

@@ -1,0 +1,15 @@
+Expected output when every task is complete
+
+Test command, run in starter/:
+  mvn -q -o test
+
+Exit status: 0.
+Success is the exit status together with the test report below, not silence:
+quiet mode (-q) hides Maven's progress, but some JDK and Maven versions still print
+warnings such as "WARNING: A restricted method ..." that are not test failures.
+
+Test report, starter/target/surefire-reports/registrar.QueriesLabTest.txt, contains the line:
+  Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
+
+Database: the run's own queries_lab_<run id> database no longer exists after the run,
+and starter/target/lab-database.txt has been removed; the tests drop only the database they created.

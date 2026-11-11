@@ -1,0 +1,8 @@
+# Build output from the test command
+target/
+# Editor and operating-system files stay on your machine
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db

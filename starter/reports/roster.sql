@@ -1,0 +1,3 @@
+-- Task 3: the SQL-track roster (README.md, Task 3). One SELECT statement.
+-- Columns, in order: course_code, name, city, grade, result.
+-- TODO: write your query below this line.

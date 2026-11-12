@@ -1,0 +1,27 @@
+# Exa grading manifest for this SQL/JDBC lab: best-effort first version, not
+# yet verified inside Exa Studio. It follows the observed Exa schema
+# (everything under 'test:') and is meant to drive both local Run Tests and
+# grading.
+#
+# PREREQUISITE (not verified in Exa): a running PostgreSQL server (16 or
+# later) that the tests reach over TCP through PGHOST, PGPORT, PGUSER and
+# PGDATABASE (defaults localhost, 5432, your login user, postgres). The user
+# must be allowed to create databases; each run creates and drops its own lab
+# database.
+# Task 1 also runs the psql client (on PATH, or named by the PSQL variable).
+# The observed schema declares no database service, so this manifest cannot
+# provide one. Without a reachable server the command exits nonzero with
+# "Could not reach PostgreSQL to create the lab database": a missing
+# prerequisite, not a learner result.
+#
+# ASSUMPTION: no 'image' is declared, so Exa's documented fallback to the
+# project's pinned runtime pack applies. It must supply JDK 25, Apache Maven
+# 3.9 and this lab's Maven dependencies offline: the command runs Maven
+# offline (-o) and there is no 'setup' step, so nothing is downloaded.
+#
+# The command runs from the repository root. Surefire writes one JUnit XML
+# report per test class under starter/target/surefire-reports/. Test failures
+# stay visible: quiet mode (-q) prints only problems.
+test:
+  command: "mvn -q -B -o -f starter/pom.xml test"
+  reports: "starter/target/surefire-reports/*.xml"

@@ -99,30 +99,64 @@ psql -h localhost -d postgres -c "DROP DATABASE queries_scratch;"
 
 1. **Seed the database (`seed.sql`).**
    1. Insert the four courses above with one `INSERT INTO courses (code, title, capacity, prerequisite_code) VALUES ...`, naming the columns. A course must exist before a course that names it as a prerequisite, and before any enrollment in it.
-   2. The students' line is supplied: `\copy students (id, name, email, city) FROM '../fixtures/students.csv' WITH (FORMAT csv, HEADER)`. `\copy` makes `psql` read the file on your machine and send the rows to the server. Use it as the pattern for step 4.
+   2. The students' line is supplied: `\copy students (id, name, email, city) FROM '../fixtures/students.csv' WITH (FORMAT csv, HEADER)`.
    3. Add five guest students with `INSERT ... SELECT` over `generate_series(901, 905)`: ids 901 to 905, names `Guest 901` to `Guest 905`, emails `guest901@registrar.test` to `guest905@registrar.test`, and no city.
    4. Load the enrollments from `../fixtures/enrollments.csv` (columns `student_id, course_code, enrolled_at, grade`) with a second `\copy`, after the students and courses they refer to.
 
    The test also checks that `seed.sql` uses `\copy` and `generate_series` on lines that are not comments.
+
+   <details><summary>Hint</summary>
+
+   `\copy` makes `psql` read the file on your machine and send the rows to the server. Use the supplied students' line as the pattern for step 4.
+
+   </details>
+
 2. **Make two corrections (`changes.sql`).** First preview each `WHERE` with a `SELECT` in your practice database, then keep only the two changes in the file:
    1. Student 2's SQL201 grade has arrived: set it to 79 with an `UPDATE` whose `WHERE` matches only that enrollment.
    2. Student 7 withdraws from JDB301: remove that one enrollment with a `DELETE`.
    3. End both statements with `RETURNING`, so each shows the row it changed.
 
    The test compares the whole table afterwards, so a `WHERE` that matches extra rows fails.
-3. **SQL-track roster (`reports/roster.sql`).** One row per enrollment in a course whose code starts with `SQL` (use `LIKE`), joined to the student. Columns `course_code`, `name`, `city`, `grade`, `result`:
-   - `city` shows `not given` when it is NULL (`COALESCE`).
+3. **SQL-track roster (`reports/roster.sql`).** One row per enrollment in a course whose code starts with `SQL`, joined to the student. Columns `course_code`, `name`, `city`, `grade`, `result`:
+   - `city` shows `not given` when it is NULL.
    - `result` is a `CASE`: `pending` when the grade is NULL, `pass` when it is 50 or more, otherwise `fail`.
-   - Sort by `course_code`, then grade from highest to lowest with ungraded students last (`NULLS LAST`), then `name`.
-4. **Course load (`reports/course_load.sql`).** The draft in the file fails with a GROUP BY error. Fix it so every selected column is grouped or aggregated, then finish it:
+   - Sort by `course_code`, then grade from highest to lowest with ungraded students last, then `name`.
+
+   <details><summary>Hint</summary>
+
+   Use `LIKE` for the course-code prefix, `COALESCE` for the missing city, and `NULLS LAST` to put ungraded students last.
+
+   </details>
+
+4. **Course load (`reports/course_load.sql`).** The draft in the file fails with a GROUP BY error. Fix it, then finish it:
    - Columns `code`, `title`, `enrolled` (enrollments in the course), `graded` (enrollments that have a grade), `seats_left` (`capacity` minus `enrolled`).
    - One row per course, all four courses, sorted by `code`. `PGA110` has no enrollments yet and must show 0 enrolled.
+
+   <details><summary>Hint</summary>
+
+   To fix the GROUP BY error, make every selected column grouped or aggregated.
+
+   </details>
+
 5. **Averages by city (`reports/city_averages.sql`).** The file supplies the first column, `COALESCE(s.city, 'not given') AS city`, and the `FROM` and `JOIN` lines. You add:
    - the columns `graded` (enrollments with a grade), `average_grade` (`AVG` of grade, unrounded) and `best_grade` (`MAX` of grade);
    - a `GROUP BY` on the same `COALESCE` expression;
-   - a filter that keeps only cities with at least 2 graded enrollments. It is a condition on an aggregate, so it belongs in `HAVING`, not `WHERE`;
+   - a filter that keeps only cities with at least 2 graded enrollments;
    - sorting by `average_grade` from highest to lowest.
-6. **Prerequisite gaps (`reports/prerequisite_gaps.sql`).** List each enrollment whose course has a prerequisite that the same student has no enrollment for. Join `courses` to itself (for example `courses AS c` and `courses AS p`) to show the prerequisite's title, and use `NOT EXISTS` to keep only the missing ones. Columns `name`, `course_code`, `prerequisite_code`, `prerequisite_title`, sorted by `name`, then `course_code`.
+
+   <details><summary>Hint</summary>
+
+   The filter is a condition on an aggregate, so it belongs in `HAVING`, not `WHERE`.
+
+   </details>
+
+6. **Prerequisite gaps (`reports/prerequisite_gaps.sql`).** List each enrollment whose course has a prerequisite that the same student has no enrollment for, with the prerequisite's title. Columns `name`, `course_code`, `prerequisite_code`, `prerequisite_title`, sorted by `name`, then `course_code`.
+
+   <details><summary>Hint</summary>
+
+   Join `courses` to itself (for example `courses AS c` and `courses AS p`) to show the prerequisite's title, and use `NOT EXISTS` to keep only the missing ones.
+
+   </details>
 
 **Starting over (optional):** the shipped version of every file is in the lab's original repository, in the same folder. Copy your attempt somewhere else first if you want to keep it, then paste the shipped text back into the file.
 

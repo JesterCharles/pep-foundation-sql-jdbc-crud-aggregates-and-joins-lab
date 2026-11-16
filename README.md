@@ -1,6 +1,6 @@
 # Queries lab: run the registrar's term desk
 
-You look after the registrar database from the Relational Design lab: students, courses and enrollments. This term you load it with data, make two corrections, and write the four reports the course coordinator asks for. The tests run every file you write against a fresh database on the PostgreSQL server the tests connect to.
+You look after a registrar database: students, courses and enrollments. This term you load it with data, make two corrections, and write the four reports the course coordinator asks for. The tests run every file you write against a fresh database on the PostgreSQL server the tests connect to.
 
 ```
 OPEN the project -> EDIT a TODO -> RUN the tests -> READ the feedback -> STOP when all pass
@@ -64,7 +64,7 @@ Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
 
 ## The data
 
-`../fixtures/schema.sql` creates the tables: your Relational Design schema plus `students.city` (may be empty) and `courses.prerequisite_code` (the course to take first, or empty). `../fixtures/students.csv` holds 8 students and `../fixtures/enrollments.csv` holds 12 enrollments; an empty field means NULL.
+`../fixtures/schema.sql` creates the tables `students`, `courses` and `enrollments`, including `students.city` (may be empty) and `courses.prerequisite_code` (the course to take first, or empty). `../fixtures/students.csv` holds 8 students and `../fixtures/enrollments.csv` holds 12 enrollments; an empty field means NULL.
 
 The four courses (Task 1 inserts them):
 
@@ -158,7 +158,7 @@ psql -h localhost -d postgres -c "DROP DATABASE queries_scratch;"
 
    </details>
 
-**Starting over (optional):** the shipped version of every file is in the lab's original repository, in the same folder. Copy your attempt somewhere else first if you want to keep it, then paste the shipped text back into the file.
+**Starting over (optional):** before you change a file, keep a copy of it outside the `starter` folder. To restart that file, paste the copy back.
 
 ## What the tests do
 

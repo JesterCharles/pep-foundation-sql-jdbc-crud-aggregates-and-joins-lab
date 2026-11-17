@@ -38,7 +38,9 @@ import java.util.concurrent.TimeUnit;
 final class LabDatabase {
     static final String PREFIX = "queries_lab_";
     static final Path RECORD = Path.of("target", "lab-database.txt");
-    static final Path FIXTURES = Path.of("..", "fixtures");
+    static final Path FIXTURES = Path.of("fixtures");
+    /** The folder that holds the learner's SQL files; test messages name files relative to it. */
+    static final Path SQL = Path.of("src", "main", "sql");
 
     private static final SecureRandom RANDOM = new SecureRandom();
     private static final String DUPLICATE_DATABASE = "42P04";
@@ -58,7 +60,7 @@ final class LabDatabase {
         if (host.startsWith("/") || host.contains("\\") || host.contains(",")) {
             throw new SQLException("PGHOST is set to \"" + host + "\", which is not a host name. "
                     + "The tests connect over TCP, so set PGHOST to a host name or IP address such as localhost "
-                    + "(see README.md, Setup).");
+                    + "(see the lab instructions, Setup).");
         }
         return host;
     }
@@ -100,7 +102,7 @@ final class LabDatabase {
                     continue; // someone else's database has this name: leave it alone and try another
                 }
                 throw new SQLException("Could not reach PostgreSQL to create the lab database. "
-                        + "Check that the server is running and that the connection check in README.md "
+                        + "Check that the server is running and that the connection check in the lab instructions "
                         + "(Prerequisites) works with the same settings. Server said: " + e.getMessage(), e);
             }
         }
@@ -129,7 +131,7 @@ final class LabDatabase {
         }
     }
 
-    /** Replaces every table with empty ones from ../fixtures/schema.sql. */
+    /** Replaces every table with empty ones from fixtures/schema.sql. */
     static void emptyTables(Connection c) throws SQLException, IOException {
         try (Statement s = c.createStatement()) {
             s.execute("DROP SCHEMA public CASCADE; CREATE SCHEMA public;");
@@ -181,7 +183,7 @@ final class LabDatabase {
 
     /** The learner's file, or null when it still holds only comments and blank lines. */
     static String learnerSql(String file) throws IOException {
-        String text = Files.readString(Path.of(file));
+        String text = Files.readString(SQL.resolve(file));
         StringBuilder code = new StringBuilder();
         for (String line : text.split("\\R")) {
             String trimmed = line.strip();
@@ -195,7 +197,7 @@ final class LabDatabase {
     /** The file's SQL with block comments, -- comments and blank lines removed, for the few checks that read the text itself. */
     static String codeOnly(String file) throws IOException {
         StringBuilder code = new StringBuilder();
-        String text = Files.readString(Path.of(file)).replaceAll("(?s)/\\*.*?\\*/", " ");
+        String text = Files.readString(SQL.resolve(file)).replaceAll("(?s)/\\*.*?\\*/", " ");
         for (String line : text.split("\\R")) {
             int comment = line.indexOf("--");
             String kept = (comment >= 0 ? line.substring(0, comment) : line).strip();
@@ -248,12 +250,12 @@ final class LabDatabase {
     record PsqlRun(int exitCode, String output) {
     }
 
-    /** Runs psql -f file against this run's database, from the starter/ folder, and stops on the first error. */
+    /** Runs psql -f file against this run's database, from the project folder, and stops on the first error. */
     static PsqlRun psql(String file) throws IOException, InterruptedException, SQLException {
         String psql = env("PSQL", "psql");
         // -w: never prompt for a password; the password file or PGPASSWORD supplies it, as for the tests.
         ProcessBuilder pb = new ProcessBuilder(psql, "-X", "-q", "-w", "-v", "ON_ERROR_STOP=1",
-                "-h", host(), "-p", env("PGPORT", "5432"), "-U", user(), "-d", owned, "-f", file);
+                "-h", host(), "-p", env("PGPORT", "5432"), "-U", user(), "-d", owned, "-f", SQL.resolve(file).toString());
         pb.redirectErrorStream(true);
         Path log = Files.createTempFile(RECORD.getParent(), "psql-", ".txt");
         pb.redirectOutput(log.toFile());
@@ -266,7 +268,7 @@ final class LabDatabase {
             Files.deleteIfExists(log);
             throw new IOException("Could not start psql (\"" + psql + "\"). The seed task runs your script with the real psql "
                     + "client: check that psql --version works in this terminal, or set PSQL to the full path of psql "
-                    + "(see README.md, Troubleshooting).", e);
+                    + "(see the lab instructions, Troubleshooting).", e);
         }
         process.getOutputStream().close();
         boolean finished = process.waitFor(60, TimeUnit.SECONDS);

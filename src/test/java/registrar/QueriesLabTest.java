@@ -47,7 +47,7 @@ class QueriesLabTest {
     private static String sql(String task, String file) throws Exception {
         String text = LabDatabase.learnerSql(file);
         if (text == null) {
-            fail(task + ": " + file + " has no SQL yet. Write it below the TODO line (README.md, " + task + ").");
+            fail(task + ": " + file + " has no SQL yet. Write it below the TODO line (lab instructions, " + task + ").");
         }
         return text;
     }
@@ -97,17 +97,17 @@ class QueriesLabTest {
         List<List<String>> wantStudents = table(STUDENTS);
         List<List<String>> wantEnrollments = table(ENROLLMENTS);
 
-        assertEquals(wantCourses, courses, "Task 1 (courses): after seed.sql, courses should hold exactly the four courses in README.md, "
+        assertEquals(wantCourses, courses, "Task 1 (courses): after seed.sql, courses should hold exactly the four courses in the lab instructions, "
                 + "Task 1. Expected " + wantCourses + " but found " + courses + ".");
         List<List<String>> csvStudents = students.stream().filter(r -> Integer.parseInt(r.get(0)) < 900).toList();
         List<List<String>> wantCsvStudents = wantStudents.stream().filter(r -> Integer.parseInt(r.get(0)) < 900).toList();
-        assertEquals(wantCsvStudents, csvStudents, "Task 1 (students from CSV): students 1-8 should match ../fixtures/students.csv, "
+        assertEquals(wantCsvStudents, csvStudents, "Task 1 (students from CSV): students 1-8 should match fixtures/students.csv, "
                 + "with an empty city loaded as NULL. Expected " + wantCsvStudents + " but found " + csvStudents + ".");
         List<List<String>> guests = students.stream().filter(r -> Integer.parseInt(r.get(0)) >= 900).toList();
         List<List<String>> wantGuests = wantStudents.stream().filter(r -> Integer.parseInt(r.get(0)) >= 900).toList();
         assertEquals(wantGuests, guests, "Task 1 (guest students): generate_series should add exactly students 901-905 named "
                 + "'Guest 901' ... with emails guest901@registrar.test ... and no city. Expected " + wantGuests + " but found " + guests + ".");
-        assertEquals(wantEnrollments, enrollments, "Task 1 (enrollments): enrollments should match ../fixtures/enrollments.csv, "
+        assertEquals(wantEnrollments, enrollments, "Task 1 (enrollments): enrollments should match fixtures/enrollments.csv, "
                 + "with an empty grade loaded as NULL. Expected " + wantEnrollments + " but found " + enrollments + ".");
 
         String lower = LabDatabase.codeOnly("seed.sql").toLowerCase(Locale.ROOT);

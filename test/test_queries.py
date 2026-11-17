@@ -30,7 +30,7 @@ def test_task1_seed(db):
     want_courses, want_students, want_enrollments = table(db, COURSES), table(db, STUDENTS), table(db, ENROLLMENTS)
 
     assert courses == want_courses, ("Task 1 (courses): after seed.sql, courses should hold exactly the four courses in the "
-                                     f"lab instructions, Task 1. Expected {want_courses} but found {courses}.")
+                                     f"lab README, Task 1. Expected {want_courses} but found {courses}.")
     csv_students = [r for r in students if int(r[0]) < 900]
     want_csv_students = [r for r in want_students if int(r[0]) < 900]
     assert csv_students == want_csv_students, (

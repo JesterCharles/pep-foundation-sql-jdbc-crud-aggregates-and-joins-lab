@@ -96,7 +96,7 @@ def learner_sql(task: str, name: str) -> str:
     """The learner's file src/<name>; fails the task while it holds only comments and blank lines."""
     content = (SRC / name).read_text(encoding="utf-8")
     if not any(line.strip() and not line.strip().startswith("--") for line in content.splitlines()):
-        pytest.fail(f"{task}: {name} has no SQL yet. Write it below the TODO line (lab instructions, {task}).", pytrace=False)
+        pytest.fail(f"{task}: {name} has no SQL yet. Write it below the TODO line (lab README, {task}).", pytrace=False)
     return content
 
 

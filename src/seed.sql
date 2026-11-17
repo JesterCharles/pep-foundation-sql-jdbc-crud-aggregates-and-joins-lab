@@ -3,7 +3,7 @@
 --   import_students    (id, name, email, city)                     from students.csv
 --   import_enrollments (student_id, course_code, enrolled_at, grade) from enrollments.csv
 -- Every import column is text, and an empty CSV field is an empty string ''.
--- Write the statements in the order the foreign keys need (lab instructions, Task 1):
+-- Write the statements in the order the foreign keys need (lab README, Task 1):
 --   1. INSERT the four courses, naming the columns.
 --   2. INSERT ... SELECT the students from import_students.
 --   3. INSERT ... SELECT the five guest students with generate_series.

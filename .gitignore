@@ -14,3 +14,6 @@ target/
 build/
 .gradle/
 *.class
+
+# Editor files Exa Studio writes per machine
+.vscode/settings.json

@@ -1,0 +1,3 @@
+pytest
+pgserver==0.1.4
+psycopg[binary]

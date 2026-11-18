@@ -1,70 +1,55 @@
 # Queries lab: run the registrar's term desk
 
-You look after a registrar database: students, courses and enrollments. This term you load it with data, make two corrections, and write the four reports the course coordinator asks for. The tests run every file you write against a fresh database on the PostgreSQL server the tests connect to.
+You look after a registrar database: students, courses and enrollments.
+This term you load it with data, make two corrections, and write the four reports the course coordinator asks for.
+The tests run every file you write against a fresh PostgreSQL database.
 
-```
-OPEN the project -> EDIT a TODO -> RUN the tests -> READ the feedback -> STOP when all pass
-                        ^                                  |
-                        +------------ next task -----------+
-```
-
-In words: open the lab project, edit the TODO for one task, run the tests, read what the failing test tells you, and repeat with the next task. Stop when every test passes.
+You practise INSERT and INSERT ... SELECT, UPDATE and DELETE with RETURNING, joins, CASE, GROUP BY with HAVING, and NOT EXISTS.
 
 **Time:** about 35 minutes, at most 40. If you pass 40 minutes, note the next failing task and finish it later.
 
+You need no database server of your own: the tests start a private PostgreSQL 16 for each run and delete it afterwards.
+
 ## Quick start
 
-1. **Open** the lab project in VS Code, then open its terminal with **Terminal > New Terminal**. Go into the Maven project folder:
+1. Open the lab project. The files you edit are in `src/`; the checklist below names them.
+2. Select **Run Tests** before you change anything.
 
-   ```
-   cd starter
-   ```
-
-   Run every command in this README from this `starter` folder.
-2. **Run** the tests:
-
-   ```
-   mvn -q -o test
-   ```
-
-   **All 6 tests fail at first. That is expected:** each failure is a task you have not done yet.
-
-   If Maven instead says it cannot resolve a dependency, run `mvn -q dependency:go-offline` once (it needs the internet), then run the tests again.
-3. **Edit** the file for one task in [Your tasks](#your-tasks).
-4. **Read** the feedback: each failing test starts with its task number and names the next thing to fix. Run that task's test command again after each change.
-5. **Stop** when the full run `mvn -q -o test` prints no `[ERROR]` lines.
-
-The tests need a PostgreSQL server they can reach, JDK 25 and Maven 3.9 or later ([Prerequisites](#prerequisites)). If a command fails, see [Troubleshooting](#troubleshooting).
-
-## Your tasks
-
-You edit only the files below, all in `starter/`. Each one has a `TODO` line that marks where your work goes. After each task, run its test; it is done when the run prints no `[ERROR]` lines. You can do Tasks 2 to 6 in any order.
-
-- [ ] **Practice database** (about 3 minutes, not tested): make it now, so you can look at the data and preview Task 2. See [Practice database](#practice-database).
-- [ ] **1. Seed the database:** `seed.sql`
-  `mvn -q -o test -Dtest='QueriesLabTest#task1Seed'`
-- [ ] **2. Make two corrections:** `changes.sql`
-  `mvn -q -o test -Dtest='QueriesLabTest#task2Changes'`
-- [ ] **3. SQL-track roster:** `reports/roster.sql`
-  `mvn -q -o test -Dtest='QueriesLabTest#task3Roster'`
-- [ ] **4. Course load:** `reports/course_load.sql`
-  `mvn -q -o test -Dtest='QueriesLabTest#task4CourseLoad'`
-- [ ] **5. Averages by city:** `reports/city_averages.sql`
-  `mvn -q -o test -Dtest='QueriesLabTest#task5CityAverages'`
-- [ ] **6. Prerequisite gaps:** `reports/prerequisite_gaps.sql`
-  `mvn -q -o test -Dtest='QueriesLabTest#task6PrerequisiteGaps'`
-
-**Finish:** run all the tests with `mvn -q -o test`. You are done when it prints no `[ERROR]` lines and `target/surefire-reports/registrar.QueriesLabTest.txt` contains:
+   **All 6 visible tests fail at first. That is expected: each failure is a task you have not done yet.**
+   Every failure message starts with its task number, such as `Task 1:`.
+3. Work through the checklist below. After each task, select **Run Tests** again and read the remaining `Task N:` messages.
+4. **You are finished when all 6 visible tests pass.** Then select **Submit**.
+   Submitting also runs held-out tests you can't see. They check that each file does what its task asks in full, for example that a `WHERE` matches only the rows it should, even when the data differs.
 
 ```
-Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
+OPEN project -> RUN TESTS: 6 fail (expected)
+  -> READ the "Task N:" messages -> EDIT the next TODO -> RUN TESTS again
+  -> repeat for Tasks 1-6 -> SUBMIT when all 6 tests pass
 ```
 
-`WARNING:` lines from Java or Maven, such as `WARNING: A restricted method ...`, are not test failures.
+In words: open the project, run the tests, read which tasks fail, complete one task's TODO, run the tests again, and submit when they all pass.
+
+## Checklist
+
+You edit only the files below, all in `src/`. Each one has a `TODO` line that marks where your work goes. You can do Tasks 2 to 6 in any order.
+
+- [ ] Practice database (about 3 minutes, not tested): open it now, so you can look at the data and preview Task 2. See [Practice database](#practice-database).
+- [ ] Task 1: seed the database, `seed.sql` (test `test_task1_seed`)
+- [ ] Task 2: make two corrections, `changes.sql` (test `test_task2_changes`)
+- [ ] Task 3: SQL-track roster, `roster.sql` (test `test_task3_roster`)
+- [ ] Task 4: course load, `course_load.sql` (test `test_task4_course_load`)
+- [ ] Task 5: averages by city, `city_averages.sql` (test `test_task5_city_averages`)
+- [ ] Task 6: prerequisite gaps, `prerequisite_gaps.sql` (test `test_task6_prerequisite_gaps`)
+
+A task is done when no failure message starts with its number.
+The tests and their data in `test/` are restored to their original state before your work is graded, so changes to them do not count.
+
+From a terminal in the project folder, you can run one task's test on its own, for example `python -m pytest -q -k task1`, or all of them with `python -m pytest -q`.
 
 ## The data
 
-`../fixtures/schema.sql` creates the tables `students`, `courses` and `enrollments`, including `students.city` (may be empty) and `courses.prerequisite_code` (the course to take first, or empty). `../fixtures/students.csv` holds 8 students and `../fixtures/enrollments.csv` holds 12 enrollments; an empty field means NULL.
+`test/fixtures/schema.sql` creates the tables `students`, `courses` and `enrollments`, including `students.city` (may be empty) and `courses.prerequisite_code` (the course to take first, or empty).
+`test/fixtures/students.csv` holds 8 students and `test/fixtures/enrollments.csv` holds 12 enrollments; an empty field means NULL.
 
 The four courses (Task 1 inserts them):
 
@@ -79,137 +64,122 @@ Every test starts from fresh tables. Task 1 runs your `seed.sql`; Tasks 2 to 6 l
 
 ## Practice database
 
-Make your own database to look at the data and preview Task 2's changes. The tests never use or check it. From `starter`:
+A practice database lets you look at the data and preview Task 2's changes. The tests never use or check it. In a terminal, from the project folder:
 
 ```
-psql -h localhost -d postgres -c "CREATE DATABASE queries_scratch;"
-psql -h localhost -d queries_scratch -f ../fixtures/schema.sql
-psql -h localhost -d queries_scratch
+python -m test.practice
 ```
 
-At the `queries_scratch=>` prompt, run `\l` (your new database is in the server's list), `\dt` (its three tables), `\d enrollments` (its columns, keys and indexes), then `\q` to leave.
+It starts a private PostgreSQL with the registrar tables and all their data, and opens a `psql` prompt.
+At the prompt, run `\dt` (the three tables), `\d enrollments` (its columns, keys and indexes) and any `SELECT` you like.
+Leave with `\q`: the practice database is deleted, so the next start is fresh and your changes never carry over.
 
-After Task 1, load your seed into it once with `psql -h localhost -d queries_scratch -f seed.sql`. To load it again, drop the database and make it again. When you finish the lab, drop it:
+Other ways to start it:
 
-```
-psql -h localhost -d postgres -c "DROP DATABASE queries_scratch;"
-```
+| Command | What you get |
+| --- | --- |
+| `python -m test.practice src/roster.sql` | the full data, your report run once, then the prompt |
+| `python -m test.practice --empty` | empty tables plus the two import tables, for Task 1 |
+| `python -m test.practice --empty src/seed.sql` | your seed script run on the empty tables, then the prompt |
 
-## Task details
+## Task steps
 
-1. **Seed the database (`seed.sql`).**
-   1. Insert the four courses above with one `INSERT INTO courses (code, title, capacity, prerequisite_code) VALUES ...`, naming the columns. A course must exist before a course that names it as a prerequisite, and before any enrollment in it.
-   2. The students' line is supplied: `\copy students (id, name, email, city) FROM '../fixtures/students.csv' WITH (FORMAT csv, HEADER)`.
-   3. Add five guest students with `INSERT ... SELECT` over `generate_series(901, 905)`: ids 901 to 905, names `Guest 901` to `Guest 905`, emails `guest901@registrar.test` to `guest905@registrar.test`, and no city.
-   4. Load the enrollments from `../fixtures/enrollments.csv` (columns `student_id, course_code, enrolled_at, grade`) with a second `\copy`, after the students and courses they refer to.
+### Task 1: seed the database (`seed.sql`)
 
-   The test also checks that `seed.sql` uses `\copy` and `generate_series` on lines that are not comments.
+A bulk import has already copied the two CSV files, unchanged, into two import tables: `import_students (id, name, email, city)` and `import_enrollments (student_id, course_code, enrolled_at, grade)`.
+Every import column is `text`, and an empty CSV field is an empty string `''`. Your seed script moves the rows into the real tables, converting each value to the column's type:
 
-   <details><summary>Hint</summary>
+1. Insert the four courses above with one `INSERT INTO courses (code, title, capacity, prerequisite_code) VALUES ...`, naming the columns. A course must exist before a course that names it as a prerequisite, and before any enrollment in it.
+2. The students' statement is supplied: `INSERT INTO students (id, name, email, city) SELECT id::integer, name, email, NULLIF(city, '') FROM import_students;`
+3. Add five guest students with `INSERT ... SELECT` over `generate_series(901, 905)`: ids 901 to 905, names `Guest 901` to `Guest 905`, emails `guest901@registrar.test` to `guest905@registrar.test`, and no city.
+4. Copy the enrollments from `import_enrollments` with a second `INSERT ... SELECT`, after the students and courses they refer to. An empty grade must become NULL.
 
-   `\copy` makes `psql` read the file on your machine and send the rows to the server. Use the supplied students' line as the pattern for step 4.
+The tests run the whole file at once. If any statement fails, none of the file's rows are kept, and the failure quotes PostgreSQL's message.
 
-   </details>
+<details><summary>Hint</summary>
 
-2. **Make two corrections (`changes.sql`).** First preview each `WHERE` with a `SELECT` in your practice database, then keep only the two changes in the file:
-   1. Student 2's SQL201 grade has arrived: set it to 79 with an `UPDATE` whose `WHERE` matches only that enrollment.
-   2. Student 7 withdraws from JDB301: remove that one enrollment with a `DELETE`.
-   3. End both statements with `RETURNING`, so each shows the row it changed.
+Use the supplied students' statement as the pattern for step 4: cast each text column with `::` to the type the `enrollments` column has, and turn `''` into NULL with `NULLIF` before casting the grade.
 
-   The test compares the whole table afterwards, so a `WHERE` that matches extra rows fails.
-3. **SQL-track roster (`reports/roster.sql`).** One row per enrollment in a course whose code starts with `SQL`, joined to the student. Columns `course_code`, `name`, `city`, `grade`, `result`:
-   - `city` shows `not given` when it is NULL.
-   - `result` is a `CASE`: `pending` when the grade is NULL, `pass` when it is 50 or more, otherwise `fail`.
-   - Sort by `course_code`, then grade from highest to lowest with ungraded students last, then `name`.
+</details>
 
-   <details><summary>Hint</summary>
+### Task 2: make two corrections (`changes.sql`)
 
-   Use `LIKE` for the course-code prefix, `COALESCE` for the missing city, and `NULLS LAST` to put ungraded students last.
+First preview each `WHERE` with a `SELECT` in your practice database, then keep only the two changes in the file:
+1. Student 2's SQL201 grade has arrived: set it to 79 with an `UPDATE` whose `WHERE` matches only that enrollment.
+2. Student 7 withdraws from JDB301: remove that one enrollment with a `DELETE`.
+3. End both statements with `RETURNING`, so each shows the row it changed.
 
-   </details>
+The test compares the whole table afterwards, so a `WHERE` that matches extra rows fails.
 
-4. **Course load (`reports/course_load.sql`).** The draft in the file fails with a GROUP BY error. Fix it, then finish it:
-   - Columns `code`, `title`, `enrolled` (enrollments in the course), `graded` (enrollments that have a grade), `seats_left` (`capacity` minus `enrolled`).
-   - One row per course, all four courses, sorted by `code`. `PGA110` has no enrollments yet and must show 0 enrolled.
+### Task 3: SQL-track roster (`roster.sql`)
 
-   <details><summary>Hint</summary>
+One row per enrollment in a course whose code starts with `SQL`, joined to the student. Columns `course_code`, `name`, `city`, `grade`, `result`:
+- `city` shows `not given` when it is NULL.
+- `result` is a `CASE`: `pending` when the grade is NULL, `pass` when it is 50 or more, otherwise `fail`.
+- Sort by `course_code`, then grade from highest to lowest with ungraded students last, then `name`.
 
-   To fix the GROUP BY error, make every selected column grouped or aggregated.
+<details><summary>Hint</summary>
 
-   </details>
+Use `LIKE` for the course-code prefix, `COALESCE` for the missing city, and `NULLS LAST` to put ungraded students last.
 
-5. **Averages by city (`reports/city_averages.sql`).** The file supplies the first column, `COALESCE(s.city, 'not given') AS city`, and the `FROM` and `JOIN` lines. You add:
-   - the columns `graded` (enrollments with a grade), `average_grade` (`AVG` of grade, unrounded) and `best_grade` (`MAX` of grade);
-   - a `GROUP BY` on the same `COALESCE` expression;
-   - a filter that keeps only cities with at least 2 graded enrollments;
-   - sorting by `average_grade` from highest to lowest.
+</details>
 
-   <details><summary>Hint</summary>
+### Task 4: course load (`course_load.sql`)
 
-   The filter is a condition on an aggregate, so it belongs in `HAVING`, not `WHERE`.
+The draft in the file fails with a GROUP BY error. Fix it, then finish it:
+- Columns `code`, `title`, `enrolled` (enrollments in the course), `graded` (enrollments that have a grade), `seats_left` (`capacity` minus `enrolled`).
+- One row per course, all four courses, sorted by `code`. `PGA110` has no enrollments yet and must show 0 enrolled.
 
-   </details>
+<details><summary>Hint</summary>
 
-6. **Prerequisite gaps (`reports/prerequisite_gaps.sql`).** List each enrollment whose course has a prerequisite that the same student has no enrollment for, with the prerequisite's title. Columns `name`, `course_code`, `prerequisite_code`, `prerequisite_title`, sorted by `name`, then `course_code`.
+To fix the GROUP BY error, make every selected column grouped or aggregated.
 
-   <details><summary>Hint</summary>
+</details>
 
-   Join `courses` to itself (for example `courses AS c` and `courses AS p`) to show the prerequisite's title, and use `NOT EXISTS` to keep only the missing ones.
+### Task 5: averages by city (`city_averages.sql`)
 
-   </details>
+The file supplies the first column, `COALESCE(s.city, 'not given') AS city`, and the `FROM` and `JOIN` lines. You add:
+- the columns `graded` (enrollments with a grade), `average_grade` (`AVG` of grade, unrounded) and `best_grade` (`MAX` of grade);
+- a `GROUP BY` on the same `COALESCE` expression;
+- a filter that keeps only cities with at least 2 graded enrollments;
+- sorting by `average_grade` from highest to lowest.
 
-**Starting over (optional):** before you change a file, keep a copy of it outside the `starter` folder. To restart that file, paste the copy back.
+<details><summary>Hint</summary>
+
+The filter is a condition on an aggregate, so it belongs in `HAVING`, not `WHERE`.
+
+</details>
+
+### Task 6: prerequisite gaps (`prerequisite_gaps.sql`)
+
+List each enrollment whose course has a prerequisite that the same student has no enrollment for, with the prerequisite's title. Columns `name`, `course_code`, `prerequisite_code`, `prerequisite_title`, sorted by `name`, then `course_code`.
+
+<details><summary>Hint</summary>
+
+Join `courses` to itself (for example `courses AS c` and `courses AS p`) to show the prerequisite's title, and use `NOT EXISTS` to keep only the missing ones.
+
+</details>
+
+**Starting over (optional):** before you change a file, keep a copy of it outside the project folder. To restart that file, paste the copy back.
 
 ## What the tests do
 
-Each run creates its own database with a unique name such as `queries_lab_3f9c0a1b7d2e`, runs the tests in it, and drops it. It never touches a database it did not create. While a run is in progress, the database's name is in `starter/target/lab-database.txt`. After setup, the tests run offline and talk only to that PostgreSQL server.
+The first test starts a private PostgreSQL 16 from the `pgserver` package in a temporary folder.
+Every test then gets its own new database with fresh tables, runs your file in it, compares the results, and drops that database.
+At the end of the run the server and its folder are deleted. The tests never connect to any other database.
 
-## Prerequisites
+## Using an AI assistant
 
-| Tool | Version | Check |
-| --- | --- | --- |
-| PostgreSQL server and `psql` | 18 (16 or later works) | the connection check below |
-| JDK | 25 | `java -version` |
-| Apache Maven | 3.9 or later | `mvn -v` |
-
-### Connection check
-
-```
-psql -h localhost -p 5432 -d postgres -c "SELECT version();"
-```
-
-It should print one row starting `PostgreSQL 18` (or 16, 17) without asking for a password.
-
-## Setup
-
-The quick start is all the setup most learners need. Only if the connection check needs other values: the tests read the same environment variables as `psql`. Set the ones you need in the terminal where you run the tests; they last until you close it.
-
-| Variable | Meaning | Default |
-| --- | --- | --- |
-| `PGHOST` | server host name | `localhost` |
-| `PGPORT` | server port | `5432` |
-| `PGUSER` | a PostgreSQL user allowed to create databases | your login name |
-| `PGDATABASE` | an existing database to connect to first | `postgres` |
-
-For example `export PGUSER=postgres` (macOS or Linux) or `$env:PGUSER = "postgres"` (Windows PowerShell).
-
-**If your server asks for a password**, put one line, `localhost:5432:*:postgres:your-password`, in `~/.pgpass` and run `chmod 600 ~/.pgpass` (macOS or Linux), or in `%APPDATA%\postgresql\pgpass.conf` (Windows). Never write a password into a lab file.
+If you use an AI assistant, ask it to explain, not to answer.
+"Explain why this column must appear in GROUP BY" teaches you SQL; "write my report query" does not.
+Check any explanation with a test run before you trust it.
 
 ## Troubleshooting
 
 | What you see | What to do |
 | --- | --- |
-| `cd: no such file or directory: starter` (or `Cannot find path`) | The terminal is not in the lab's top folder, the one that holds this `README.md` and the `starter` folder. Change to that folder, then run `cd starter`. |
-| `Could not reach PostgreSQL to create the lab database` | Run the [connection check](#connection-check) until it prints the version. |
-| `password authentication failed` or `no password was provided` | Set up a [password file](#setup), or set `PGUSER`. |
-| `permission denied to create database` | Use a PostgreSQL user that may create databases, such as `postgres`. |
-| `Could not start psql` | `psql --version` must work in this terminal. On Windows, add PostgreSQL's `bin` folder to `PATH`, or set `PSQL` to the full path of `psql.exe`. |
-| `psql stopped on an error in seed.sql` with a foreign key | Insert the parent rows (courses, then students) before the rows that refer to them. |
+| `pgserver package, which is not installed` | Run `python -m pip install -r requirements.txt`. `pgserver` needs Python 3.9 to 3.12; **Run Tests** uses a supported Python. |
+| `seed.sql stopped on an error` with a foreign key | Insert the parent rows (courses, then students) before the rows that refer to them. |
+| `seed.sql stopped on an error` with `invalid input syntax` | An empty string `''` cannot be cast to a number: wrap the column in `NULLIF(column, '')` before the cast. |
 | `must appear in the GROUP BY clause` | Every selected column must be in `GROUP BY` or inside an aggregate. |
 | `NOT IN` returns no rows | A NULL in the subquery makes `NOT IN` unknown for every row; use `NOT EXISTS`. |
-| Maven cannot resolve a dependency offline | Run `mvn -q dependency:go-offline` once with the internet on. |
-| A run was interrupted | Drop the database named in `starter/target/lab-database.txt`, for example `psql -h localhost -d postgres -c "DROP DATABASE queries_lab_3f9c0a1b7d2e;"` with the name from the file. |
-
-## Tested with
-
-PostgreSQL 18.3, psql 18.3, JDK 25 and Maven 3.9.9 on macOS (arm64), with no-password local connections. Linux and Windows runs have not been recorded yet; the steps follow PostgreSQL's documented behaviour there.

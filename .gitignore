@@ -1,8 +1,19 @@
-# Build output from the test command
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.env
+reports/
+
+# Node
+node_modules/
+
+# Java
 target/
-# Editor and operating-system files stay on your machine
-.idea/
-.vscode/
-*.iml
-.DS_Store
-Thumbs.db
+build/
+.gradle/
+*.class
+
+# Editor files Exa Studio writes per machine
+.vscode/settings.json

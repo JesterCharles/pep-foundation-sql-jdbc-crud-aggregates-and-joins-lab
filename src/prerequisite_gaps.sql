@@ -1,3 +1,3 @@
--- Task 6: prerequisite gaps (README.md, Task 6). One SELECT statement.
+-- Task 6: prerequisite gaps (lab README, Task 6). One SELECT statement.
 -- Columns, in order: name, course_code, prerequisite_code, prerequisite_title.
 -- TODO: write your query below this line.

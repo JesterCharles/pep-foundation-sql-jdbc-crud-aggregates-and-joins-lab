@@ -1,4 +1,4 @@
--- Task 4: the course load report (README.md, Task 4). One SELECT statement.
+-- Task 4: the course load report (lab README, Task 4). One SELECT statement.
 -- Columns, in order: code, title, enrolled, graded, seats_left.
 -- The previous coordinator left this draft. It fails with a GROUP BY error and it drops
 -- courses that have no enrollments. TODO: fix and finish it.
